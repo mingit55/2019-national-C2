@@ -11,19 +11,17 @@ class Viewport {
         this.ctx.lineCap = "round";
 
         app.$viewport.append(this.$canvas);
-
-        this.frame();
+        this.app.$video.addEventListener("loadedmetadata", () => this.frame());
     }
 
     set track(input){
         if(this.current_track){
-            this.current_track.$video.pause();
-            this.current_track.$video.remove();
+            this.app.$video.pause();
+            this.app.$video.remove();
             this.current_track.$list.remove();
         }
         this.current_track = input;       
 
-        this.app.$viewport.prepend(input.$video);
         this.app.$cliplist.append(input.$list);
     }
 
@@ -43,7 +41,7 @@ class Viewport {
 
     frame(){
         if(this.current_track){
-            const {currentTime, duration} = this.current_track.$video;
+            const {currentTime, duration} = this.app.$video;
             this.app.$playtime.currentTime.innerText = currentTime.parseTimer();
             this.app.$playtime.duration.innerText = duration.parseTimer();
             this.current_track.seekCursor();
@@ -57,7 +55,7 @@ class Viewport {
     }
 
     render(){
-        const { currentTime } = this.current_track.$video;
+        const { currentTime } = this.app.$video;
 
         this.ctx.clearRect(0, 0, this.app.width, this.app.height);
         this.current_track.clipList.filter(clip => {
@@ -68,10 +66,10 @@ class Viewport {
     }
 
     play(){
-        this.current_track.$video.play();
+        this.app.$video.play();
     }
 
     pause(){
-        this.current_track.$video.pause();
+        this.app.$video.pause();
     }
 }
