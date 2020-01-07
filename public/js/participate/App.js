@@ -207,7 +207,7 @@ class App {
         if(this.viewport.current_track === null) return alert("동영상을 선택해주세요.");
 
         let clipHTML = this.viewport.current_track.clipList.reduce((p, c) => p + c.outerHTML(), "");
-        return  `<div>
+        return  `<div style="position: absolute; width: 100%; height: 100%; background: #000;">
                     <div id="viewport" style="position: relative; width: ${this.width}px; height: ${this.height}px; margin: 0 auto; background: #000; display: flex; justify-content: center; align-items: center;">
                         <video src="${this.viewport.current_track.$video.src}" width="${this.width}px; height: ${this.height}px; outline: 0;"></video>
                         ${clipHTML}

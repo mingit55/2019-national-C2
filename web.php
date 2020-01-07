@@ -33,11 +33,13 @@ Route::set("GET", "/event/participate", "EventController@participatePage");
 Route::set("POST", "/event/participate", "EventController@participate", "USER");
 
 Route::set("GET", "/event/contest-list", "EventController@listpage");
+Route::set("GET", "/event/contest-detail", "EventController@detailPage");
 
 
 
 // API
 Route::set("POST", "/api/take-schedules", "MovieController@takeSchedules");
 Route::set("GET", "/api/download-schedules", "MovieController@downloadSchedules");
+Route::set("POST","/api/good-contest", "EventController@goodContest", "USER");
 
 Route::redirect();
