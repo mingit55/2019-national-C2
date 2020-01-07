@@ -39,11 +39,12 @@
                     <button type="submit" class="normal-btn mt-5">신청하기</button>
                 </form>
             </div>
-            <div class="col-md-6">
-                <?php if($movie_count > 0):?>
-                    <img src="/images/graph.php" alt="Graph">
-                <?php endif;?>
-            </div>
+            
+            <?php if($movie_count > 0):?>
+                <div class="col-md-6" style="background: url(/images/graph.php) no-repeat; background-size: 100% auto;">
+                </div>
+            <?php endif;?>
+            
         </div>
     </div>
 </div>

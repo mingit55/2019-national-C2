@@ -27,4 +27,8 @@ class MovieController {
         
         go("/", "출품 신청이 완료되었습니다. 관리자 승인 후 일정에 추가됩니다.");
     }
+
+    function calenderPage(){
+        view("movie-calender");
+    }
 }

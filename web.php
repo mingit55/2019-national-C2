@@ -21,4 +21,7 @@ Route::set("GET", "/users/logout", "UserController@logout", "USER");
 Route::set("GET", "/apply", "MovieController@applyPage", "USER");
 Route::set("POST", "/apply", "MovieController@apply", "USER");
 
+// Calender
+Route::set("GET", "/calender", "MovieController@calenderPage");
+
 Route::redirect();
