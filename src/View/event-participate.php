@@ -30,6 +30,7 @@
                 <button id="download-btn" class="tool btn my-1">다운로드</button>
                 <button id="merge-btn" class="tool btn my-1">병합하기</button>
                 <button id="reset-btn" class="tool btn my-1">초기화</button>
+                <button id="submit-btn" class="tool btn my-1">콘테스트 참여하기</button>
             </div>
             <div class="col-md-8">
                 <!-- 동영상이 보여지는 곳 -->
@@ -93,3 +94,18 @@
         </div>
     </div>
 </div>
+
+<form method="post">
+    <input type="hidden" id="mid" name="mid">
+    <input type="hidden" id="html-input" name="html">
+</form>
+
+<script>
+    document.querySelector("#submit-btn").addEventListener("click", e => {
+        if(app.viewport.current_track === null) return alert("동영상을 선택해 주세요.");
+        
+        document.querySelector("#html-input").value = app.outerHTML();
+        document.querySelector("#mid").value = app.viewport.current_track.id;
+        document.querySelector("form").submit();
+    });
+</script>

@@ -7,7 +7,7 @@ class MainController {
     }
 
     function homePage(){
-        view("home");        
+        view("home", [], true);        
     }
 
     function holdInfoPage(){

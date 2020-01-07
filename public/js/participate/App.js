@@ -176,41 +176,8 @@ class App {
         // 다운로드
         this.$buttons.download.addEventListener("click", () => {
             if(this.viewport.current_track === null) return alert("동영상을 선택해주세요.");
-
-            let clipHTML = this.viewport.current_track.clipList.reduce((p, c) => p + c.outerHTML(), "");
             
-            let html =  `<div>
-                            <div id="viewport" style="position: relative; width: ${this.width}px; height: ${this.height}px; margin: 0 auto; background: #000; display: flex; justify-content: center; align-items: center;">
-                                <video src="${this.viewport.current_track.$video.src}" width="${this.width}px; height: ${this.height}px; outline: 0;"></video>
-                                ${clipHTML}
-                            </div>
-                            <script>
-                                window.onload = function(){
-                                    const clipList = document.querySelectorAll(".clip");
-                                    const video = document.querySelector("video");
-                                    const viewport = document.querySelector("#viewport");
-                                    video.controls = true;
-                                    
-                                    (function render(){
-                                        const {currentTime} = video;
-
-                                        clipList.forEach(clip => {
-                                            let startTime = parseInt(clip.dataset.startTime);
-                                            let duration = parseInt(clip.dataset.duration);
-                                            
-                                            if(startTime <= currentTime && currentTime <= startTime + duration) viewport.append(clip);
-                                            else clip.remove();
-                                        });
-
-                                        requestAnimationFrame(() => {
-                                            render();
-                                        });
-                                    })();                                    
-                                }
-                            </script>
-                        </div>`;
-            
-            let contents = $(html)[0];
+            let contents = $(this.outerHTML())[0];
             let blob = new Blob([contents.outerHTML], {type: "text/html"});
             let url = URL.createObjectURL(blob);
             
@@ -234,6 +201,42 @@ class App {
             this.$viewport.append(this.no_video);
             this.viewport = new Viewport(this);
         });
+    }
+
+    outerHTML(){
+        if(this.viewport.current_track === null) return alert("동영상을 선택해주세요.");
+
+        let clipHTML = this.viewport.current_track.clipList.reduce((p, c) => p + c.outerHTML(), "");
+        return  `<div>
+                    <div id="viewport" style="position: relative; width: ${this.width}px; height: ${this.height}px; margin: 0 auto; background: #000; display: flex; justify-content: center; align-items: center;">
+                        <video src="${this.viewport.current_track.$video.src}" width="${this.width}px; height: ${this.height}px; outline: 0;"></video>
+                        ${clipHTML}
+                    </div>
+                    <script>
+                        window.onload = function(){
+                            const clipList = document.querySelectorAll(".clip");
+                            const video = document.querySelector("video");
+                            const viewport = document.querySelector("#viewport");
+                            video.controls = true;
+                            
+                            (function render(){
+                                const {currentTime} = video;
+
+                                clipList.forEach(clip => {
+                                    let startTime = parseInt(clip.dataset.startTime);
+                                    let duration = parseInt(clip.dataset.duration);
+                                    
+                                    if(startTime <= currentTime && currentTime <= startTime + duration) viewport.append(clip);
+                                    else clip.remove();
+                                });
+
+                                requestAnimationFrame(() => {
+                                    render();
+                                });
+                            })();                                    
+                        }
+                    </script>
+                </div>`;
     }
 }
 
