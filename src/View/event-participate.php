@@ -34,9 +34,7 @@
             </div>
             <div class="col-md-8">
                 <!-- 동영상이 보여지는 곳 -->
-                <div id="viewport">
-                    <video></video>
-                </div>
+                <div id="viewport"></div>
                 <!-- 재생 시간 확인 -->
                 <div class="row justify-content-between mt-2 mx-2">
                     <div id="play-time" class="d-flex"> 

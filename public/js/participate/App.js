@@ -53,11 +53,6 @@ class App {
             duration: document.querySelector("#clip-time .duration")
         }
 
-        this.$video = document.querySelector("video");
-        this.$video.controls = false;
-        this.$video.width = this.width;
-        this.$video.height = this.height;
-
         this.$cliplist = document.querySelector("#clip-list");
         this.$movies = document.querySelectorAll("#movie-list .movie");
 

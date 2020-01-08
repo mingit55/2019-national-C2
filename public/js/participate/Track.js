@@ -3,8 +3,11 @@ class Track {
         this.id = id;
         this.app = app;
 
-        this.$video = this.app.$video;
+        this.$video = document.createElement("video");
+        this.$video.controls = false;
         this.$video.src = `/videos/movie${id}.mp4`;
+        this.$video.width = app.width;
+        this.$video.height = app.height;
 
         this.init();
     }
@@ -113,9 +116,9 @@ class Track {
         clip.$viewline.style.left = this.app.$cliplist.offsetWidth * startTime / this.$video.duration + "px";
 
         clip.mergeList = clip.mergeList.concat(mergeList);
+        clip.merge = false;
 
         clip.$line.querySelector("input").checked = false;
-        clip.merge = false;
 
         this.app.$cliplist.firstElementChild.prepend(clip.$line);      
         this.clipList.push(clip);
