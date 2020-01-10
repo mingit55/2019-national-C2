@@ -2,6 +2,8 @@ class Curve extends Clip {
     constructor(){
         super(...arguments);
         this.history = [];
+
+        
     }
 
     selectDown(e){
@@ -10,6 +12,24 @@ class Curve extends Clip {
         
         this.copy = Object.assign(this.history);
         this.pos = {x: X, y: Y};
+
+        // const split_length = 100;
+        // let checkList = [];
+        // let _history = this.history.slice(0);
+        // for(let i = 0; i < _history.length - 1 ; i++){
+        //     let item = _history[i];
+        //     let next = _history[i + 1];
+
+        //     // split_length만큼 경로 사이에 새로운 경로를 생성한다.
+        //     for(let d = 1; d <= split_length; d++){
+        //         let pushed = {
+        //             x: (item.x + next.x) / split_length * unit,
+        //             y: (item.y + item.y) / split_length * unit,
+        //         }
+        //         checkList.push(pushed);
+                
+        //     }
+        // }
 
         return this.history.some(path => {
             let check_x = path[0] - mw <= X && X <= path[0] + mw;
