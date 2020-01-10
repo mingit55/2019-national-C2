@@ -2,6 +2,7 @@
 namespace Controller;
 
 use App\DB;
+use ZipArchive;
 
 class MovieController {
     function applyPage(){
@@ -162,15 +163,74 @@ class MovieController {
         $userList = UserController::takeUserList();
         
 
-        header("Content-Type: text/csv; charset=UTF-8");
-        header("Content-Disposition: attachment; filename=" . date("Y-m-d", strtotime($date)). "_상영일정.csv");
-
-        $csvText = "출품자 이름\t아이디\t영화 제목\t러닝타임\t제작연도\t분류\n";
+        $write = [["출품자 이름","아이디","영화 제목","러닝타임","제작연도","분류"]];
         foreach($scheduleList as $schedule){
             $schedule->user_name = $schedule->uid == "admin" ? $userList[0]->user_name : ($schedule->uid == "user" ? $userList[1]->user_name : null);
-            $csvText .= "$schedule->user_name\t$schedule->uid\t$schedule->movie_name\t$schedule->running_time\t$schedule->created_at\t$schedule->type\n";
+            $write[] = [$schedule->user_name, $schedule->uid, $schedule->movie_name, $schedule->running_time, $schedule->created_at, $schedule->type];
         }
 
-        echo $csvText;
+        $template_file = TEMPLATE."/template.xlsx";
+        
+        $zip = new ZipArchive();
+        $res = $zip->open($template_file);
+        if(!$res) throw "템플릿 파일을 열 수 없습니다.";
+        $zip->extractTo(TEMPLATE."/temp");
+        $strings = simplexml_load_file(TEMPLATE."/temp/xl/sharedStrings.xml");
+        $sheet = simplexml_load_file(TEMPLATE."/temp/xl/worksheets/sheet1.xml");
+        
+        $colName = "ABCDEF";
+        $stringIndex = 0;
+        $strings['count'] = 0;
+        $strings['uniqueCount'] = 0;
+        foreach($write as $idx => $row){
+            $sheet->sheetData->row[$idx]['r'] = (string)($idx + 1);
+            $sheet->sheetData->row[$idx]['spans'] = "1:6";
+            
+            foreach($row as $i => $col){
+                if(gettype($col) === "string"){
+                    $stringIndex++;
+                    $strings['count'] = (string)$stringIndex;
+                    $strings['uniqueCount'] = (string)$stringIndex;
+                    $strings->si[$stringIndex]->t = $col;
+
+                    $sheet->sheetData->row[$idx]->c[$i]['r'] = $colName[$i].($idx+1);
+                    $sheet->sheetData->row[$idx]->c[$i]['t'] = "s";
+                    $sheet->sheetData->row[$idx]->c[$i]->v = (string)$stringIndex;
+                }
+                else {
+                    $sheet->sheetData->row[$idx]->c[$i]['r'] = $colName[$i].($i+1);
+                    $sheet->sheetData->row[$idx]->c[$i]->v = (string)$col;
+                }
+            }
+        }
+
+        $strings->asXML(TEMPLATE."/temp/xl/sharedStrings.xml");
+        $sheet->asXML(TEMPLATE."/temp/xl/worksheets/sheet1.xml");
+
+        function addFile($zip, $file){
+            if(is_file($file)) $zip->addFile($file, mb_substr($file, mb_strlen(TEMPLATE."/temp") + 1));
+            else {
+                $scan = scandir($file);
+                $path = $file;
+                foreach($scan as $item){
+                    if($item === ".." || $item === ".") continue;
+                    if(is_dir($path."/".$item)) addFile($zip, $path."/".$item);
+                    else $zip->addFile($path."/".$item, mb_substr($path."/".$item, mb_strlen(TEMPLATE."/temp") + 1));
+                }
+            }
+        }
+
+        $req = $zip->open(TEMPLATE."/write.xlsx", ZipArchive::OVERWRITE || ZipArchive::CREATE);
+        if(!$req) throw "엑셀 파일을 생성할 수 없습니다!";
+
+        addFile($zip, TEMPLATE."/temp");
+
+        $zip->close();
+
+        header("Content-Type: octet-stream; charset=UTF-8");
+        header("Content-Disposition: attachment; filename=" . date("Y-m-d", strtotime($date)). "_상영일정.xlsx");
+        ob_clean();
+        
+        readfile(TEMPLATE."/write.xlsx");
     }
 }
